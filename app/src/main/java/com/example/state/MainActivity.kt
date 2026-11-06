@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             StateTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Practica02Inicio(modifier = Modifier.padding(innerPadding))
+                    Practica03Inicio(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -40,51 +42,47 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Practica02Inicio(modifier: Modifier = Modifier) {
-    var numero1 by remember { mutableStateOf("") }
-    var numero2 by remember { mutableStateOf("") }
-    var resultado by remember { mutableIntStateOf(0) }
+fun Practica03Inicio(modifier: Modifier = Modifier) {
+    var numero by remember { mutableStateOf("") }
+    var cantidad by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = "Suma de dos números")
+        Text(text = "Práctica 03")
 
         OutlinedTextField(
-            value = numero1,
-            onValueChange = { numero1 = it },
-            label = { Text("Número 1") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
-
-        OutlinedTextField(
-            value = numero2,
-            onValueChange = { numero2 = it },
-            label = { Text("Número 2") },
+            value = numero,
+            onValueChange = { numero = it },
+            label = { Text("Ingresa un número") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         Button(onClick = {
-            val num1 = numero1.toIntOrNull() ?: 0
-            val num2 = numero2.toIntOrNull() ?: 0
-            resultado = num1 + num2
+            cantidad = numero.toIntOrNull() ?: 0
         }) {
-            Text("Sumar")
+            Text("Imprimir")
         }
 
-        Text(
-            text = "Resultado: $resultado"
-        )
+        repeat(cantidad) {
+            ImprimirCaracter("*")
+        }
     }
+}
+
+@Composable
+fun ImprimirCaracter(caracter: String) {
+    Text(text = caracter)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun InicioPreview() {
     StateTheme {
-        Practica02Inicio()
+        Practica03Inicio()
     }
 }
