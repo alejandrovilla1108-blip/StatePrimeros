@@ -4,9 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,21 +15,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.state.ui.theme.StateTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             StateTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Practica05Inicio(modifier = Modifier.padding(innerPadding))
+                    Practica06Inicio(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -46,64 +45,100 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Practica05Inicio(modifier: Modifier = Modifier) {
-    val listaNombres = remember { mutableStateListOf<String>() }
-    var nombreEscrito by rememberSaveable { mutableStateOf("") }
+fun Practica06Inicio(
+    modifier: Modifier = Modifier
+) {
+    var textoColor by remember {
+        mutableStateOf("")
+    }
 
-    Column(modifier = modifier.fillMaxSize().padding(16.dp)) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Spacer(modifier = Modifier.height(10.dp))
+    val listaColores = remember {
+        mutableStateListOf<Color>()
+    }
 
-                TextField(
-                    value = nombreEscrito,
-                    onValueChange = { nombreEscrito = it },
-                    label = { Text("Ingresa un nombre") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+    var error by remember {
+        mutableStateOf("")
+    }
 
-                Spacer(modifier = Modifier.height(10.dp))
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
 
-                Button(
-                    onClick = {
-                        if (nombreEscrito.isNotBlank()) {
-                            listaNombres.add(nombreEscrito)
-                            nombreEscrito = ""
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Agregar")
+        Text(text = "Lista de colores")
+
+        OutlinedTextField(
+            value = textoColor,
+            onValueChange = {
+                textoColor = it
+            },
+            label = {
+                Text("Ingresa un color")
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Button(
+            onClick = {
+                val color = validarColor(textoColor)
+
+                if (color != null) {
+                    listaColores.add(color)
+                    textoColor = ""
+                    error = ""
+                } else {
+                    error = "Color no válido"
                 }
-            }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Agregar")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        if (error.isNotEmpty()) {
+            Text(
+                text = error,
+                color = Color.Red
+            )
+        }
 
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(listaNombres) { nombre ->
-                MiCard(nombre = nombre)
+            items(listaColores) { color ->
+                CuadroColor(color)
             }
         }
     }
 }
 
 @Composable
-fun MiCard(modifier: Modifier = Modifier, nombre: String) {
-    Card(
-        modifier = modifier
+fun CuadroColor(color: Color) {
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp)
-    ) {
-        Text(
-            text = nombre,
-            modifier = Modifier.padding(16.dp),
-            fontSize = 18.sp
-        )
+            .height(70.dp)
+            .background(color)
+    )
+}
+
+fun validarColor(nombre: String): Color? {
+    return when (nombre.trim().lowercase()) {
+        "rojo" -> Color.Red
+        "azul" -> Color.Blue
+        "verde" -> Color.Green
+        "amarillo" -> Color.Yellow
+        "negro" -> Color.Black
+        "blanco" -> Color.White
+        "gris" -> Color.Gray
+        "cyan" -> Color.Cyan
+        "magenta" -> Color.Magenta
+        else -> null
     }
 }
 
@@ -111,6 +146,6 @@ fun MiCard(modifier: Modifier = Modifier, nombre: String) {
 @Composable
 fun InicioPreview() {
     StateTheme {
-        Practica05Inicio()
+        Practica06Inicio()
     }
 }
